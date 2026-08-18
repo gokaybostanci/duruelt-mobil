@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Duru ELT Panel",
+    "slug": "duruelt-mobil",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": { "backgroundColor": "#0096ff", "resizeMode": "contain" },
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "com.duruelt.panel",
+      "versionCode": 1,
+      "adaptiveIcon": { "backgroundColor": "#0096ff" },
+      "permissions": ["INTERNET", "POST_NOTIFICATIONS"]
+    },
+    "plugins": ["expo-secure-store", "expo-notifications"],
+    "extra": { "apiKok": "https://www.duruelt.com.tr" }
+  }
+}
