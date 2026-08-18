@@ -1,0 +1,45 @@
+# APK'yi GITHUB'DA derler. Expo hesabi / EAS GEREKMEZ: ubuntu kosucusunda Android SDK + JDK 17
+# hazir gelir, "expo prebuild" native android klasorunu uretir, gradle APK'yi cikarir.
+# Sonuc: Actions calismasinin "Artifacts" bolumunde indirilebilir .apk
+name: APK derle
+
+on:
+  workflow_dispatch:        # Actions sekmesinden elle "Run workflow"
+  push:
+    tags: ["v*"]            # v1.0.0 gibi etiket atinca da derler
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17     # modern Android Gradle icin sart (yerel makinede JDK 8 vardi)
+
+      - name: Bagimliliklar
+        run: npm install --no-audit --no-fund
+
+      - name: Native android klasorunu uret
+        run: npx expo prebuild --platform android --no-install
+
+      # DEBUG imzali APK: dogrudan kuruluma uygun ve imza anahtari (keystore) gerektirmez.
+      # Play Store'a cikilmayacagi icin release imzalama zinciri bilincli olarak kurulmadi.
+      - name: Gradle ile APK
+        working-directory: android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: duruelt-panel-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 30
